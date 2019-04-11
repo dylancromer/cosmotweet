@@ -5,7 +5,7 @@ from pretend import stub
 '''
 COSMOBOT: Class
 
-    - it periodically checks for new content from astro-ph.CO
+    - it sees new articles added to its feed
 '''
 class ArxivPaper:
     pass
