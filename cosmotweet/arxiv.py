@@ -7,3 +7,11 @@ class ArxivDaily:
 
     def get_papers(self, date):
         return {paper for paper in self.papers if paper.date == date}
+
+class ArxivRSS:
+    def __init__(self):
+        pass
+
+    def retrieve_papers(self):
+        rss_feed = self.get_rss_feed()
+        return rss_feed
