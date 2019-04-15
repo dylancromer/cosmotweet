@@ -1,3 +1,5 @@
+from cosmotweet.utils import get_rss_feed
+
 class Paper:
     pass
 
@@ -10,8 +12,12 @@ class ArxivDaily:
 
 class ArxivRSS:
     def __init__(self):
+        self.get_rss_feed = get_rss_feed
+
+    def feed_to_papers(self, rss_feed):
         pass
 
     def retrieve_papers(self):
-        rss_feed = self.get_rss_feed()
+        URL = 'https://export.arxiv.org/rss/astro-ph.CO'
+        rss_feed = self.get_rss_feed(URL)
         return rss_feed
