@@ -1,0 +1,2 @@
+from pretend import stub
+"""
