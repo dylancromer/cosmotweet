@@ -1,4 +1,5 @@
 from pretend import stub
+import time
 """
 ArXivDaily
 
@@ -44,18 +45,20 @@ def test_ArxivRSS_retrieve_papers():
 
         - it returns a set of Papers given an RSS feed
 """
+import pickle
+from cosmotweet.arxiv import Paper
 def test_ArxivRSS_feed_to_papers():
-    test_feed = {
-        'feed': {'title': 'astro-ph.CO updates on arXiv.org',
-        'updated': '2019-04-14T20:30:00-05:00',
-        'updated_parsed': time.struct_time(tm_year=2019, tm_mon=4, tm_mday=15, tm_hour=1, tm_min=30, tm_sec=0, tm_wday=0, tm_yday=105, tm_isdst=0),
-        'sy_updatebase': '1901-01-01T00:00+00:00'}
-        'entries': [{'id': 'http://arxiv.org/abs/1904.05904',
-        'title': 'the title'
-        'links': [{'rel': 'alternate',
-        'type': 'text/html',
-        'href': 'http://arxiv.org/abs/1904.05904'}],
-        'link': 'http://arxiv.org/abs/1904.05904',
-        'summary': 'this is the abstract',
-        'authors': [{'name': 'names of authors'}]}]
-    }
+    with open('data/test/test_rss.pkl', 'rb') as pickle_file:
+        rss_test = pickle.load(pickle_file)
+
+    papers = ArxivRSS().feed_to_papers(rss_test)
+
+    should_be = Paper(
+        title = 'Axion-Dilaton Destabilization and the Hubble Tension. (arXiv:1904.08912v1 [astro-ph.CO])',
+        authors = 'Stephon Alexander, Evan McDonough',
+        arxiv_id = '1904.08912',
+        link = 'arxiv.org/abs/1904.08912',
+        post_date = '2019-04-18T20:30:00-05:00'
+    )
+
+    assert should_be in papers
