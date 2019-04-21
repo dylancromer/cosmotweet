@@ -2,57 +2,56 @@ import time
 import schedule
 from cosmotweet.arxiv import ArxivDaily, ArxivRSS
 
-def time_linspace(start, stop, num):
-    pass
+
+
 
 def _get_current_day():
+    #TODO: make less stupid
     return '2019-04-11'
 
+
 def _get_current_time():
+    #TODO: formatting may not be what I want
     return time.localtime()
 
+
 class Cosmobot:
-    def _get_papers(self, date):
-        return self.arxiv_daily.papers(date)
-
-    def _get_next_refresh_time(self, date):
-        pass
-
     def __init__(self):
         self.now = _get_current_time
         self.today = _get_current_day()
 
         self.arxiv_rss = ArxivRSS()
-        current_papers = ArxivRSS.retrieve_papers()
+        current_papers = ArxivRSS.fetch_current_papers()
 
         self.arxiv_daily = ArxivDaily(current_papers)
+
 
     def _schedule(self):
         pass
 
+
     def create_tweet(self):
         pass
 
-    def establish_daily_queue(self):
-        self.next_arxiv_refresh_time = _get_next_refresh_time(self.today)
-
-        self.paper_queue = _get_papers(self.today)
 
     def schedule_tweets(self):
-        tweet_times = time_linspace(self.now(), self.next_arxiv_refresh_time, len(self.paper_queue))
+        tweet_times = self.arxiv_daily.times
+        papers_to_schedule = self.arxiv_daily.queue
 
-        for time,paper in zip(tweet_times, self.paper_queue):
+        for time, paper in zip(tweet_times, papers_to_schedule):
             _schedule(self.create_tweet, arg=paper, time=time)
 
+
     def wait_to_refresh(self):
-        _schedule(self.refresh, time=time)
+        self._schedule(self.refresh, time=self.arxiv_daily.refresh_time)
+        self._sleep_until(self.arxiv_daily.refresh_time)
+
 
     def start_cycle(self):
-        self.establish_daily_queue()
-
         self.schedule_tweets()
 
         self.wait_to_refresh()
+
 
 def test_Cosmobot():
     cosmobot = Cosmobot()

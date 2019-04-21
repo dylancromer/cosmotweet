@@ -1,2 +1,3 @@
 from pretend import stub
 """
+"""
