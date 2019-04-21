@@ -18,7 +18,7 @@ class ArxivDaily:
         self.papers = papers
 
     def get_papers(self, date):
-        return set(paper for paper in self.papers if paper.date == date)
+        return {paper for paper in self.papers if paper.date == date}
 
 
 class ArxivRSS:
@@ -26,9 +26,15 @@ class ArxivRSS:
         self.get_rss_feed = get_rss_feed
 
 
+    def fetch_feed(self):
+        URL = 'https://export.arxiv.org/rss/astro-ph.CO'
+        rss_feed = self.get_rss_feed(URL)
+        return rss_feed
+
+
     def _get_author(self, auth_string):
-        authors = strip_tags(auth_string)#.split(',')
-        return authors #[auth.strip() for auth in authors]
+        authors = strip_tags(auth_string)
+        return authors
 
 
     def _get_id(self, id_string):
@@ -65,7 +71,5 @@ class ArxivRSS:
         return papers
 
 
-    def retrieve_papers(self):
-        URL = 'https://export.arxiv.org/rss/astro-ph.CO'
-        rss_feed = self.get_rss_feed(URL)
-        return rss_feed
+    def fetch_current_papers(self):
+        return self.feed_to_papers(self.fetch_feed())
