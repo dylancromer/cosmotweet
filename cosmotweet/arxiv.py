@@ -23,12 +23,12 @@ class ArxivDaily:
 
 class ArxivRSS:
     def __init__(self):
-        self.get_rss_feed = get_rss_feed
+        self._get_rss_feed = get_rss_feed
 
 
     def fetch_feed(self):
         URL = 'https://export.arxiv.org/rss/astro-ph.CO'
-        rss_feed = self.get_rss_feed(URL)
+        rss_feed = self._get_rss_feed(URL)
         return rss_feed
 
 
