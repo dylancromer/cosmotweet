@@ -34,7 +34,7 @@ def test_ArxivRSS_fetch_feed():
     }
 
     arxiv_rss = ArxivRSS()
-    arxiv_rss.get_rss_feed = lambda url : test_papers
+    arxiv_rss._get_rss_feed = lambda url : test_papers
 
     new_papers = arxiv_rss.fetch_feed()
 
@@ -66,7 +66,7 @@ def test_ArxivRSS_feed_to_papers():
 """
     fetch_current_papers()
 
-        - it returns a set of the current papers
+        - it returns the current papers
 """
 def test_ArxivRSS_fetch_current_papers():
     with open('data/test/test_rss.pkl', 'rb') as pickle_file:
