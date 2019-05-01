@@ -1,58 +1,56 @@
 import time
-import schedule
+from cosmotweet.scheduler import _schedule
 from cosmotweet.arxiv import ArxivDaily, ArxivRSS
+from cosmotweet.twitter import TweetMaker
 
 
 
 
-def _get_current_day():
-    #TODO: make less stupid
-    return '2019-04-11'
+class NoTweetMaker:
+    pass
 
 
-def _get_current_time():
-    #TODO: formatting may not be what I want
-    return time.localtime()
+class NoArxivDaily:
+    pass
 
 
-class Cosmobot:
-    def __init__(self):
-        self.now = _get_current_time
-        self.today = _get_current_day()
-
+class CosmoBot:
+    def __init__(self, tweet_maker=NoTweetMaker(), arxiv_daily=NoArxivDaily()):
         self.arxiv_rss = ArxivRSS()
-        current_papers = ArxivRSS.fetch_current_papers()
 
-        self.arxiv_daily = ArxivDaily(current_papers)
+        if isinstance(arxiv_daily, NoArxivDaily):
+            current_papers = self.arxiv_rss.fetch_current_papers()
+            self.arxiv_daily = ArxivDaily(current_papers)
+        else:
+            self.arxiv_daily = arxiv_daily
+
+        if isinstance(tweet_maker, NoTweetMaker):
+            self.tweet_maker = TweetMaker()
+        else:
+            self.tweet_maker = tweet_maker
 
 
-    def _schedule(self):
-        pass
+    def create_tweet(self, paper):
+        tweet = paper.title.split('.')[0] + '.'
+        tweet += '\n(' + paper.authors + ').'
+        tweet += '\n' + paper.link
+        return self.tweet_maker.make_tweet(tweet)
 
 
-    def create_tweet(self):
-        pass
-
-
-    def schedule_tweets(self):
+    def _schedule_tweets(self):
         tweet_times = self.arxiv_daily.times
         papers_to_schedule = self.arxiv_daily.queue
 
-        for time, paper in zip(tweet_times, papers_to_schedule):
-            _schedule(self.create_tweet, arg=paper, time=time)
+        for time_, paper in zip(tweet_times, papers_to_schedule):
+            _schedule(self.create_tweet, args=paper, wait_time=time_)
 
 
-    def wait_to_refresh(self):
-        self._schedule(self.refresh, time=self.arxiv_daily.refresh_time)
+    def _wait_to_refresh(self):
+        _schedule(self.refresh, time=self.arxiv_daily.refresh_time)
         self._sleep_until(self.arxiv_daily.refresh_time)
 
 
     def start_cycle(self):
-        self.schedule_tweets()
+        self._schedule_tweets()
 
         self.wait_to_refresh()
-
-
-def test_Cosmobot():
-    cosmobot = Cosmobot()
-    cosmobot.start_cycle()
