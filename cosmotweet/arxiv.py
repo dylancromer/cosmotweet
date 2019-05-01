@@ -1,6 +1,6 @@
-from cosmotweet.utils import get_rss_feed, strip_tags
+import random
 from dataclasses import dataclass
-
+from cosmotweet.utils import get_rss_feed, strip_tags
 
 
 
@@ -15,11 +15,13 @@ class Paper:
 
 class ArxivDaily:
     def __init__(self, papers):
-        self.papers = papers
+        self.queue = set(random.sample(papers, len(sample)))
+
+        self.times = self.construct_times()
 
 
-    def get_papers(self, date):
-        return {paper for paper in self.papers if paper.date == date}
+    def construct_times(self):
+        pass
 
 
 class ArxivRSS:

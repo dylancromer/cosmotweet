@@ -16,4 +16,3 @@ def test_ArxivDaily_papers():
     arxiv_papers = ArxivDaily(papers=test_papers)
 
     assert arxiv_papers.get_papers(date) == {paper1}
-
