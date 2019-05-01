@@ -30,10 +30,27 @@ class CosmoBot:
             self.tweet_maker = tweet_maker
 
 
+    def tweet_from_paper(self, paper):
+        title = paper.title.split('.')[0] + '.'
+        auth = '\n(' + paper.authors + ').'
+        shortauth = '\n(' + paper.authors.split(',')[0] + ', et al).'
+        link = '\n' + paper.link
+
+        if len(title + auth + link) <= 280:
+            tweet = title + auth + link
+        elif len(title + shortauth + link) <= 280:
+            tweet = title + shortauth + link
+        else:
+            used_chars = len(shortauth + link) + 3
+            chars_left = 280 - used_chars
+            tweet = title[:chars_left] + '...' + shortauth + link
+
+        assert len(tweet) <= 280
+        return tweet
+
+
     def create_tweet(self, paper):
-        tweet = paper.title.split('.')[0] + '.'
-        tweet += '\n(' + paper.authors + ').'
-        tweet += '\n' + paper.link
+        tweet = self.tweet_from_paper(paper)
         return self.tweet_maker.make_tweet(tweet)
 
 
