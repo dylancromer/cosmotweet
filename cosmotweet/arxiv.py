@@ -4,6 +4,7 @@ from cosmotweet.utils import get_rss_feed, strip_tags
 
 
 
+
 @dataclass(eq=True, frozen=True)
 class Paper:
     title: str
@@ -15,13 +16,33 @@ class Paper:
 
 class ArxivDaily:
     def __init__(self, papers):
-        self.queue = set(random.sample(papers, len(sample)))
+        self.queue = set(random.sample(papers, len(papers)))
 
-        self.times = self.construct_times()
+        self._refresh_time = 19*60**2
+        self._times = self.construct_times()
+
+
+    @property
+    def refresh_time(self):
+        pass
+
+
+    @refresh_time.setter
+    def refresh_time(self, value):
+        pass
+
+
+    @property
+    def times(self):
+        pass
+
+
+    @times.setter
+    def times(self, values):
 
 
     def construct_times(self):
-        pass
+        return [3 * 60**2, 7 * 60**2, 13 * 60**2]
 
 
 class ArxivRSS:

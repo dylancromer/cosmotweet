@@ -1,18 +1,42 @@
+import numpy as np
 from pretend import stub
 from cosmotweet.arxiv import ArxivDaily
 """
 ArXivDaily
 
-    get_papers(date)
-
-        - it returns the papers for the day, but not those from the day before
+    - it computes the times to tweet papers at
 """
-def test_ArxivDaily_papers():
-    date = '2019-04-11T20:30:00-05:00'
-    paper1 = stub(title='Making amazing new cosmologies with Walruses and the Cheese Group', date='2019-04-11T20:30:00-05:00')
-    paper2 = stub(title='Cosmology is Great, and You Should Give Cosmologists Money', date='2019-04-10T20:30:00-05:00')
-    test_papers = {paper1, paper2}
 
-    arxiv_papers = ArxivDaily(papers=test_papers)
+papers = {
+    stub(title='Amazing Paper #1'),
+    stub(title='Amazing Paper #2'),
+    stub(title='Amazing Paper #3')
+}
 
-    assert arxiv_papers.get_papers(date) == {paper1}
+daily = ArxivDaily(papers)
+daily.today = 'monday'
+
+def test_times():
+    times = daily.times
+
+    assert len(times) == 3
+
+    for time_ in times:
+        assert time_ > 0
+        assert time_ < daily.refresh_time
+
+    assert sum(times) < 24*60*60
+
+"""
+    - the times are spaced semi-evenly until the next papers are posted
+"""
+
+def test_time_spacing():
+   times = daily.times
+
+   interval = daily.refresh_time/3
+   min_interval = interval/2
+   max_interval = 2*interval
+
+   assert np.all(np.diff(times) > min_interval)
+   assert np.all(np.diff(times) < max_interval)

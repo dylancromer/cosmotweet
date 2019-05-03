@@ -9,4 +9,3 @@ def test_CosmoBot_create_tweet():
     test_tweet = "This is a test from CosmoBot"
 
     #cosmobot.create_tweet(test_tweet)
-
