@@ -20,10 +20,12 @@ class ArxivDaily:
         self.papers = papers
         self.POST_TIME = datetime.time(hour=20, minute=45)
 
+
     def get_random_queue(self):
         return set(random.sample(papers, len(papers)))
 
 
+    #TODO: UNTESTED
     def _next_posting_day(self, now):
        today = now.weekday()
        if today != 4:
@@ -32,12 +34,14 @@ class ArxivDaily:
            return now + timedelta(days=2)
 
 
+    #TODO: UNTESTED
     def _feed_not_already_posted(self, now):
         todays_post_time = now.replace(hour=self.POST_TIME.hour,
                                        minute=self.POST_TIME.minute)
         return now < todays_post_time
 
 
+    #TODO: UNTESTED
     def _get_update_time(self):
         now - datetime.datetime.now()
         next_posting_day = self._next_posting_day(now)
@@ -46,19 +50,19 @@ class ArxivDaily:
         tomorrow = (now + timedelta(days=1)).weekday()
 
         if self._feed_not_already_posted(now):
-            post_datetime = now.replace(hour=self.POST_TIME.hour,
-                                        minute=self.POST_TIME.minute)
+            post_datetime = now.replace(
+                hour=self.POST_TIME.hour,
+                minute=self.POST_TIME.minute
+            )
 
         else:
-            post_datetime = next_posting_day.replace(hour=self.POST_TIME.hour,
-                                                     minute=self.POST_TIME.minute)
+            post_datetime = next_posting_day.replace(
+                hour=self.POST_TIME.hour,
+                minute=self.POST_TIME.minute
+            )
 
         update_time = post_datetime - now
         return update_time.total_seconds()
-
-
-    def get_refresh_time(self):
-        time_till_refresh = self.get_current_time() - self._update_time()
 
 
     def get_times(self):
