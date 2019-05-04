@@ -1,4 +1,5 @@
 import random
+import datetime
 from dataclasses import dataclass
 from cosmotweet.utils import get_rss_feed, strip_tags
 
@@ -16,33 +17,52 @@ class Paper:
 
 class ArxivDaily:
     def __init__(self, papers):
-        self.queue = set(random.sample(papers, len(papers)))
+        self.papers = papers
+        self.POST_TIME = datetime.time(hour=20, minute=45)
 
-        self._refresh_time = 19*60**2
-        self._times = self.construct_times()
+    def get_random_queue(self):
+        return set(random.sample(papers, len(papers)))
 
 
-    @property
-    def refresh_time(self):
+    def _next_posting_day(self, now):
+       today = now.weekday()
+       if today != 4:
+           return now + timedelta(days=1)
+       else:
+           return now + timedelta(days=2)
+
+
+    def _feed_not_already_posted(self, now):
+        todays_post_time = now.replace(hour=self.POST_TIME.hour,
+                                       minute=self.POST_TIME.minute)
+        return now < todays_post_time
+
+
+    def _get_update_time(self):
+        now - datetime.datetime.now()
+        next_posting_day = self._next_posting_day(now)
+
+        today = now.weekday()
+        tomorrow = (now + timedelta(days=1)).weekday()
+
+        if self._feed_not_already_posted(now):
+            post_datetime = now.replace(hour=self.POST_TIME.hour,
+                                        minute=self.POST_TIME.minute)
+
+        else:
+            post_datetime = next_posting_day.replace(hour=self.POST_TIME.hour,
+                                                     minute=self.POST_TIME.minute)
+
+        update_time = post_datetime - now
+        return update_time.total_seconds()
+
+
+    def get_refresh_time(self):
+        time_till_refresh = self.get_current_time() - self._update_time()
+
+
+    def get_times(self):
         pass
-
-
-    @refresh_time.setter
-    def refresh_time(self, value):
-        pass
-
-
-    @property
-    def times(self):
-        pass
-
-
-    @times.setter
-    def times(self, values):
-
-
-    def construct_times(self):
-        return [3 * 60**2, 7 * 60**2, 13 * 60**2]
 
 
 class ArxivRSS:
