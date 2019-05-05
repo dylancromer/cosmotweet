@@ -30,6 +30,10 @@ class CosmoBot:
             self.tweet_maker = tweet_maker
 
 
+    def _sleep_until(self, time_):
+        time.sleep(time_)
+
+
     def tweet_from_paper(self, paper):
         title = paper.title.split('.')[0] + '.'
         auth = '\n(' + paper.authors + ').'
@@ -55,19 +59,26 @@ class CosmoBot:
 
 
     def _schedule_tweets(self):
-        tweet_times = self.arxiv_daily.times
-        papers_to_schedule = self.arxiv_daily.queue
+        tweet_times = self.arxiv_daily.get_times()
+        papers_to_schedule = self.arxiv_daily.get_random_queue()
 
         for time_, paper in zip(tweet_times, papers_to_schedule):
+            print(time_)
             _schedule(self.create_tweet, args=paper, wait_time=time_)
 
 
+    def refresh(self):
+        current_papers = self.arxiv_rss.fetch_current_papers()
+        self.arxiv_daily = ArxivDaily(current_papers)
+        self.start_cycle()
+
+
     def _wait_to_refresh(self):
-        _schedule(self.refresh, time=self.arxiv_daily.refresh_time)
-        self._sleep_until(self.arxiv_daily.refresh_time)
+        refresh_time = self.arxiv_daily.get_update_time()
+        _schedule(self.refresh, args=None, wait_time=refresh_time)
 
 
     def start_cycle(self):
         self._schedule_tweets()
 
-        self.wait_to_refresh()
+        self._wait_to_refresh()
