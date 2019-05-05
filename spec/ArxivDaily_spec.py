@@ -96,18 +96,32 @@ def test_feed_already_posted():
 """
 
 def test_update_time_weekday():
-    daily.now = dt.datetime(2019, 5, 1, 20, 46, 0, 0)
+    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 20, 46, 0, 0)
     update_time = daily.get_update_time()
     should_be = 23*(60**2) + 59*60
     assert should_be == update_time
 
-    daily.now = dt.datetime(2019, 5, 1, 20, 44, 0, 0)
+    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 20, 44, 0, 0)
     update_time = daily.get_update_time()
     should_be = 60
     assert should_be == update_time
 
 def test_update_time_weekend():
-    daily.now = dt.datetime(2019, 5, 3, 13, 0, 0, 0)
+    daily._get_current_time = lambda: dt.datetime(2019, 5, 3, 13, 0, 0, 0)
     update_time = daily.get_update_time()
     should_be = 2*24*(60**2) + 7*(60**2) + 45*60
     assert should_be == update_time
+
+"""
+    - it computes times to post papers, with random noise
+"""
+
+def test_get_times():
+    daily._get_current_time = dt.datetime.now
+    now = daily._get_current_time()
+    update_time = daily.get_update_time()
+
+    tweet_times = daily.get_times()
+    for tweet_time in tweet_times:
+        assert tweet_time > 0
+        assert tweet_time < update_time

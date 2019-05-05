@@ -1,6 +1,7 @@
 import random
 import datetime
 from dataclasses import dataclass
+import numpy as np
 from cosmotweet.utils import get_rss_feed, strip_tags
 
 
@@ -19,7 +20,10 @@ class ArxivDaily:
     def __init__(self, papers):
         self.papers = papers
         self.POST_TIME = datetime.time(hour=20, minute=45)
-        self.now = datetime.datetime.now()
+
+
+    def _get_current_time(self):
+        return datetime.datetime.now()
 
 
     def get_random_queue(self):
@@ -54,7 +58,7 @@ class ArxivDaily:
 
 
     def get_update_time(self):
-        now = self.now
+        now = self._get_current_time()
         next_posting_day = self._next_posting_day(now)
 
         today = now.weekday()
@@ -73,11 +77,25 @@ class ArxivDaily:
             )
 
         update_time = post_datetime - now
-        return update_time.total_seconds()
+        return int(update_time.total_seconds())
 
 
     def get_times(self):
-        pass
+        time_to_update = self.get_update_time()
+        num_papers = len(self.papers)
+
+        delta_t = (time_to_update - 60)//num_papers #give 1 minute clearance
+        time_ini = delta_t
+        time_final = time_to_update - delta_t
+        times_without_noise = np.linspace(time_ini, time_final, num_papers, dtype=int)
+
+        noise_amp = delta_t//2
+        noise = 2*np.random.rand(num_papers) - 1
+        noise *= noise_amp
+        noise = np.around(noise).astype(int)
+
+        times = times_without_noise + noise
+        return times.tolist()
 
 
 class ArxivRSS:
