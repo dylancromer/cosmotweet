@@ -19,35 +19,46 @@ class ArxivDaily:
     def __init__(self, papers):
         self.papers = papers
         self.POST_TIME = datetime.time(hour=20, minute=45)
+        self.now = datetime.datetime.now()
 
 
     def get_random_queue(self):
         return set(random.sample(papers, len(papers)))
 
 
-    #TODO: UNTESTED
     def _next_posting_day(self, now):
-       today = now.weekday()
-       if today != 4:
-           return now + timedelta(days=1)
-       else:
-           return now + timedelta(days=2)
+        today = now.weekday()
+
+        assert 0 <= today <= 6
+
+        if (today != 3) and (today != 4): #i.e. it's not Thursday or Friday
+           return now + datetime.timedelta(days=1)
+
+        elif today == 3:
+           return now + datetime.timedelta(days=3)
+
+        elif today == 4:
+           return now + datetime.timedelta(days=2)
 
 
-    #TODO: UNTESTED
     def _feed_not_already_posted(self, now):
-        todays_post_time = now.replace(hour=self.POST_TIME.hour,
-                                       minute=self.POST_TIME.minute)
-        return now < todays_post_time
+        today = now.weekday()
+
+        if (today != 4) and (today != 5): #i.e. it's not Friday or Saturday
+            todays_post_time = now.replace(hour=self.POST_TIME.hour,
+                                           minute=self.POST_TIME.minute)
+            return now < todays_post_time
+
+        else:
+            return False
 
 
-    #TODO: UNTESTED
-    def _get_update_time(self):
-        now - datetime.datetime.now()
+    def get_update_time(self):
+        now = self.now
         next_posting_day = self._next_posting_day(now)
 
         today = now.weekday()
-        tomorrow = (now + timedelta(days=1)).weekday()
+        tomorrow = (now + datetime.timedelta(days=1)).weekday()
 
         if self._feed_not_already_posted(now):
             post_datetime = now.replace(
