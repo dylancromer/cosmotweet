@@ -27,7 +27,7 @@ class ArxivDaily:
 
 
     def get_random_queue(self):
-        return set(random.sample(papers, len(papers)))
+        return set(random.sample(self.papers, len(self.papers)))
 
 
     def _next_posting_day(self, now):
