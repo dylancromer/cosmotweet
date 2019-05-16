@@ -57,7 +57,7 @@ def test_CosmoBot__schedule():
     def testfunc(obj):
         obj.soul = 'A naughty soul'
 
-    args = (test_object, )
+    args = test_object
     time_ = 0.01
 
     cosmobot.start_time = dt.datetime.now()
