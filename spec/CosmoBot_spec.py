@@ -1,3 +1,5 @@
+import time
+import datetime as dt
 from pretend import stub
 from cosmotweet.brain import CosmoBot
 """
@@ -5,10 +7,7 @@ CosmoBot
 
     - it tweets with the paper title, authors, and link
 """
-cosmobot = CosmoBot(
-    tweet_maker=stub(),
-    arxiv_daily=stub()
-)
+cosmobot = CosmoBot()
 
 def test_CosmoBot_tweet_from_paper():
 
@@ -48,3 +47,22 @@ def test_CosmoBot_tweet_from_paper_too_long():
 
     assert should_be == test_tweet
     assert len(test_tweet) == 280
+
+"""
+    - it can schedule a task to be done later
+"""
+def test_CosmoBot__schedule():
+    test_object = stub(soul='A very good soul')
+
+    def testfunc(obj):
+        obj.soul = 'A naughty soul'
+
+    args = (test_object, )
+    time_ = 0.01
+
+    cosmobot.start_time = dt.datetime.now()
+    cosmobot._schedule(testfunc, args, time_)
+
+    assert test_object.soul == 'A very good soul'
+    time.sleep(time_)
+    assert test_object.soul == 'A naughty soul'

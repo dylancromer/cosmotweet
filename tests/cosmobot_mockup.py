@@ -3,8 +3,8 @@ from cosmotweet.arxiv import Paper
 from cosmotweet.brain import CosmoBot
 from pretend import stub
 
-def main():
-    cosmobot = CosmoBot()
+
+def test_main(mocker):
     papers = {
         Paper(
             title = f'Axion-Dilaton Destabilization and the Hubble Tension. {i}',
@@ -12,14 +12,20 @@ def main():
             arxiv_id = '1904.08912',
             link = 'arxiv.org/abs/1904.08912',
             post_date = '2019-04-18T20:30:00-05:00'
-        ) for i in range(20000)
+        ) for i in range(1360)
     }
 
-    cosmobot.arxiv_rss = stub(fetch_current_papers=lambda: papers)
+    class FakeArxivRSS:
+        def fetch_current_papers(self):
+            return papers
 
-    cosmobot.tweet_maker = stub(make_tweet=lambda tweet: sys.stdout.write(tweet))
+    class FakeTweetMaker:
+        def make_tweet(self, tweet):
+            print(tweet)
 
+
+    mocker.patch('cosmotweet.brain.ArxivRSS', new=FakeArxivRSS)
+    mocker.patch('cosmotweet.brain.TweetMaker', new=FakeTweetMaker)
+
+    cosmobot = CosmoBot()
     cosmobot.start_cycle()
-
-if __name__ == '__main__':
-    main()
