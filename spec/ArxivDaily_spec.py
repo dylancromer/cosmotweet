@@ -79,29 +79,29 @@ def test_feed_not_already_posted():
 """
 
 def test_feed_already_posted():
-    base_time = dt.datetime(2019, 5, 2, 22, 0, 0, 0)
+    base_time = dt.datetime(2019, 5, 2, 23, 30, 0, 0)
 
     for i in range(7):
-        time_after_830 = base_time + dt.timedelta(days=i)
-        assert not daily._feed_not_already_posted(time_after_830)
+        time_after_11 = base_time + dt.timedelta(days=i)
+        assert not daily._feed_not_already_posted(time_after_11)
 
-    time_on_a_friday_before_830 = dt.datetime(2019, 5, 10, 3, 0, 0, 0)
-    assert not daily._feed_not_already_posted(time_on_a_friday_before_830)
+    time_on_a_friday_before_11 = dt.datetime(2019, 5, 10, 3, 0, 0, 0)
+    assert not daily._feed_not_already_posted(time_on_a_friday_before_11)
 
-    time_on_a_saturday_before_830 = dt.datetime(2019, 5, 4, 3, 0, 0, 0)
-    assert not daily._feed_not_already_posted(time_on_a_saturday_before_830)
+    time_on_a_saturday_before_11 = dt.datetime(2019, 5, 4, 3, 0, 0, 0)
+    assert not daily._feed_not_already_posted(time_on_a_saturday_before_11)
 
 """
     - the refresh time is always the next posting day at 8:30
 """
 
 def test_update_time_weekday():
-    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 20, 46, 0, 0)
+    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 23, 1, 0, 0)
     update_time = daily.get_update_time()
     should_be = 23*(60**2) + 59*60
     assert should_be == update_time
 
-    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 20, 44, 0, 0)
+    daily._get_current_time = lambda: dt.datetime(2019, 5, 1, 22, 59, 0, 0)
     update_time = daily.get_update_time()
     should_be = 60
     assert should_be == update_time
@@ -109,7 +109,7 @@ def test_update_time_weekday():
 def test_update_time_weekend():
     daily._get_current_time = lambda: dt.datetime(2019, 5, 3, 13, 0, 0, 0)
     update_time = daily.get_update_time()
-    should_be = 2*24*(60**2) + 7*(60**2) + 45*60
+    should_be = 2*24*(60**2) + 10*(60**2)
     assert should_be == update_time
 
 """

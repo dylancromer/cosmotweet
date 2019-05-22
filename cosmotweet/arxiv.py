@@ -19,7 +19,7 @@ class Paper:
 class ArxivDaily:
     def __init__(self, papers):
         self.papers = papers
-        self.POST_TIME = datetime.time(hour=0, minute=0)
+        self.POST_TIME = datetime.time(hour=23, minute=0)
 
 
     def _get_current_time(self):

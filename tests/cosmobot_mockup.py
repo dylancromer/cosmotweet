@@ -12,7 +12,7 @@ def test_main(mocker):
             arxiv_id = '1904.08912',
             link = 'arxiv.org/abs/1904.08912',
             post_date = '2019-04-18T20:30:00-05:00'
-        ) for i in range(1360)
+        ) for i in range(720)
     }
 
     class FakeArxivRSS:
