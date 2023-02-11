@@ -4,7 +4,7 @@ backcall==0.1.0
 # Editable Git install with no remote (cosmotweet==0.1)
 -e /home/davis/Development/cosmotweet
 decorator==4.4.0
-ipython==7.4.0
+ipython==8.10.0
 ipython-genutils==0.2.0
 jedi==0.13.3
 more-itertools==7.0.0
